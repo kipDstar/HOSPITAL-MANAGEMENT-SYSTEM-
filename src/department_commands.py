@@ -1,5 +1,5 @@
 import click
-from src.database import get_db_session # Import the session helper
+from src.database import get_db # Import the session helper
 from src.models import Department, Doctor # Import Department and Doctor models
 
 @click.group()
@@ -13,7 +13,7 @@ def department():
 @click.option('--head-doctor-id', type=int, help="ID of the doctor to assign as head (optional).")
 def add_department(name, specialty, head_doctor_id): # Updated signature
     """Adds a new department."""
-    session = next(get_db_session())
+    session = next(get_db())
     try:
         if head_doctor_id:
             doctor = Doctor.find_by_id(session, head_doctor_id)
@@ -31,7 +31,7 @@ def add_department(name, specialty, head_doctor_id): # Updated signature
 @department.command('list')
 def list_departments():
     """Lists all departments."""
-    session = next(get_db_session())
+    session = next(get_db())
     try:
         departments = Department.get_all(session)
         if not departments:
@@ -54,7 +54,7 @@ def list_departments():
 @click.argument('department_id', type=int)
 def show_department(department_id):
     """Shows details for a specific department, including staff."""
-    session = next(get_db_session())
+    session = next(get_db())
     try:
         dept = Department.find_by_id(session, department_id)
         if not dept:
@@ -90,7 +90,7 @@ def show_department(department_id):
 @click.option('--head-doctor-id', type=int, help="New head doctor ID for the department.")
 def update_department(department_id, name, specialty, head_doctor_id): # Updated signature
     """Updates an existing department's name, specialty, or head doctor."""
-    session = next(get_db_session())
+    session = next(get_db())
     try:
         dept = Department.find_by_id(session, department_id)
         if not dept:
@@ -124,7 +124,7 @@ def update_department(department_id, name, specialty, head_doctor_id): # Updated
 @click.argument('department_id', type=int)
 def delete_department(department_id):
     """Deletes a department."""
-    session = next(get_db_session())
+    session = next(get_db())
     try:
         if Department.delete_by_id(session, department_id):
             click.echo(f"Department with ID {department_id} deleted successfully.")
@@ -142,7 +142,7 @@ def delete_department(department_id):
 @click.argument('doctor_id', type=int)
 def assign_head_doctor_command(department_id, doctor_id):
     """Assigns a specific doctor as the head of a department."""
-    session = next(get_db_session())
+    session = next(get_db())
     try:
         dept = Department.find_by_id(session, department_id)
         if not dept:
@@ -162,7 +162,7 @@ def assign_head_doctor_command(department_id, doctor_id):
 @click.argument('department_id', type=int)
 def unassign_head_doctor_command(department_id):
     """Removes the head doctor from a department."""
-    session = next(get_db_session())
+    session = next(get_db())
     try:
         dept = Department.find_by_id(session, department_id)
         if not dept:
@@ -184,7 +184,7 @@ def unassign_head_doctor_command(department_id):
 @click.argument('department_id', type=int)
 def list_department_staff(department_id):
     """Lists all doctors (staff) belonging to a specific department."""
-    session = next(get_db_session())
+    session = next(get_db())
     try:
         dept = Department.find_by_id(session, department_id)
         if not dept:
@@ -212,7 +212,7 @@ def list_department_staff(department_id):
 @click.argument('specialty_name', type=str)
 def assign_department_specialty_command(department_id, specialty_name):
     """Assigns a primary specialty to a department."""
-    session = next(get_db_session())
+    session = next(get_db())
     try:
         dept = Department.find_by_id(session, department_id)
         if not dept:
@@ -232,7 +232,7 @@ def list_department_specialty_doctors_command(department_id):
     """
     Lists doctors in a department who match the department's own assigned specialty.
     """
-    session = next(get_db_session())
+    session = next(get_db())
     try:
         dept = Department.find_by_id(session, department_id)
         if not dept:
