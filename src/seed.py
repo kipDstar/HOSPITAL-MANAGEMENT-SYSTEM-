@@ -60,9 +60,9 @@ def seed_database():
         # --- 3. Create Patients (InPatient and OutPatient) ---
         print("Creating Patients...")
         patient1 = InPatient(name="Alice Johnson", date_of_birth=date(1985, 3, 10), contact_info="alice@example.com", admission_date=date(2023, 10, 1), room_number="101A")
-        patient2 = OutPatient(name="Bob Williams", date_of_birth=date(1990, 7, 25), contact_info="bob@example.com", admission_date=date(2023, 10, 5), last_visit_date=date(2024, 1, 15))
+        patient2 = OutPatient(name="Bob Williams", date_of_birth=date(1990, 7, 25), contact_info="bob@example.com", last_visit_date=date(2024, 1, 15))
         patient3 = InPatient(name="Carol Davis", date_of_birth=date(1970, 1, 1), contact_info="carol@example.com", admission_date=date(2024, 1, 10), room_number="203B")
-        patient4 = OutPatient(name="David Brown", date_of_birth=date(2000, 5, 20), contact_info="david@example.com", admission_date=date(2024, 2, 1), last_visit_date=date(2024, 2, 28))
+        patient4 = OutPatient(name="David Brown", date_of_birth=date(2000, 5, 20), contact_info="david@example.com", last_visit_date=date(2024, 2, 28))
         session.add_all([patient1, patient2, patient3, patient4])
         session.commit()
         print("Patients created.")
