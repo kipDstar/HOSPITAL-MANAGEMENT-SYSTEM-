@@ -33,9 +33,12 @@ def list_departments():
     """Lists all departments."""
     session = next(get_db())
     try:
+        print("DEBUG: Inside list_departments command")
         departments = Department.get_all(session)
+        print(f"DEBUG: Number of Departments found by query")
         if not departments:
             click.echo("No departments found.")
+            print(f"DEBUG: 'No departments found' path taken")
             return
 
         click.echo("--- Departments ---")
@@ -44,11 +47,13 @@ def list_departments():
             # Display the new specialty column
             dept_specialty = dept.specialty if dept.specialty else "None"
             click.echo(f"ID: {dept.id}, Name: {dept.name}, Specialty: {dept_specialty}, Head: {head_name}")
-        click.echo("----*-------*--------")
+        click.echo("-------------------")
     except Exception as e:
         click.echo(f"Error listing departments: {e}", err=True)
+        print(f"Debug: Exception caught: {e}")
     finally:
         session.close()
+        print('Debug: Session closed,')
 
 @department.command('show')
 @click.argument('department_id', type=int)
@@ -252,7 +257,7 @@ def list_department_specialty_doctors_command(department_id):
         click.echo(f"--- Doctors in Department '{dept.name}' with specialty '{dept.specialty}' ---")
         for doctor in matching_doctors:
             click.echo(f"ID: {doctor.id}, Name: {doctor.name}, Specialization: {doctor.specialization}")
-        click.echo("----*----*--------*------*------*---------*---------*------------")
+        click.echo("----------------------------------------------------------")
     except Exception as e:
         click.echo(f"Error listing specialty doctors for department: {e}", err=True)
     finally:
