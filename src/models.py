@@ -90,6 +90,14 @@ class Doctor(Base):
     @classmethod
     def find_by_id(cls, session, doctor_id):
         return session.query(cls).filter_by(id=doctor_id).first()
+    @classmethod
+    def get_all(cls, session):
+        """
+        Retrieves all Doctor objects from the database.
+        :param session: The SQLAlchemy session.
+        :return: A list of Doctor objects.
+        """
+        return session.query(cls).all()
 
 
 # --- Department Model ---
