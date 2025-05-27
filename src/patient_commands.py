@@ -144,3 +144,59 @@ def delete(patient_id):
 
 
 
+# This defines -----UPDATE COMMAND-----  which updates patients information
+@cli.command
+@click.argument('patient_id', type = int) 
+@click.option('--name', default = None, help = 'New name')
+@click.option('--dob', default = None, help = 'New DOB (YYYY MM DD)')
+@click.option('--contact', default = None, help = 'New contact information')
+@click.option('--room', default = None, help = 'New room number(for inpatients only)')
+@click.option('--admission', default = None, help = 'New admission date (YYYY MM DD)')
+@click.option('--discharge', default = None, help = 'New discharge date (YYYY MM DD)')
+@click.option('--last_visit', default = None, help = 'New last visit date (YYYY MM DD)')
+
+def update(patient_id, name, dob, contact, room, admission, discharge, last_visit):
+    """Update patients information"""
+    db = next(get_db())
+    try: 
+        patient = db.get(Patient, patient_id)
+        if not patient:
+            click.echo(f"No patient with ID {patient_id} was found.")
+        
+        if name:
+            patient.name = name 
+
+        if dob:
+            patient.date_of_birth = dob 
+
+        if contact:
+            patient.contact_info = contact
+
+        if isinstance(patient, InPatient):
+            if room is not None:
+                patient.room_number = room
+
+            if admission:
+                patient.admission_date = datetime.strptime(admission, '%Y-%M-%D')
+
+            if discharge:
+                patient.discharge_date = datetime.strptime(discharge, '%Y-%M-%D')
+
+        elif isinstance(patient, OutPatient):
+            if last_visit:
+                patient.last_visit_date = datetime.strptime(last_visit, '%Y-%M-%D')
+
+        db.commit()
+        click.echo(f"Patient ID: {patient_id} updated successfully!")
+
+    except Exception as e:
+        db.rollback()
+        click.echo(f"Error updating patient: {e}")
+
+    finally:
+        db.close
+
+
+
+if __name__ == '__main__':
+    cli()
