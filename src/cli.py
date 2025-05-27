@@ -11,7 +11,7 @@ from src import patient_commands, doctor_commands, department_commands
 
 
 # This function will be the main command group for the app.(Stores related commands)
-@click.group 
+@click.group() 
 # Defines the cli() function — which is the main entry point for your CLI.
 def cli():
     # This is the CLI description(it appears when one runs python cli.py --help)
@@ -19,7 +19,7 @@ def cli():
 
 
 # Registers a new CLI command (in this case, initdb).[It allows us to run *python cli.py getdb*]
-@cli.command 
+@cli.command() 
 # This function will create your database tables.
 def createtables():
     """Initialized Database Tables"""
@@ -31,7 +31,7 @@ def createtables():
 
 
 # Follows same structure as the getdb function
-@cli.command 
+@cli.command() 
 def seed():
     """Populate Dummy with fake data"""
     seed_database()
