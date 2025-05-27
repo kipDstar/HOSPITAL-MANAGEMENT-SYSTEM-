@@ -93,3 +93,19 @@ def add(name, dob, contact, type, room, admission, discharge, last_visit):
 
 
 
+# This defines the -----LIST COMMAND----- which lists all the patients
+@cli.command
+def list():
+    """List all patients"""
+    db = next(get_db())
+    try: 
+        patients = db.query(Patient).all()
+        for p in patients:
+            click.echo(f"ID: {p.id}, Name: {p.name}, Type: {p.type}, DOB: {p.date_of_birth}" )
+    
+    finally:
+        db.close()
+
+
+
+
