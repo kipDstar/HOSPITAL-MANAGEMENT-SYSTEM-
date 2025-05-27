@@ -30,13 +30,13 @@ def seed_database():
         session.commit()
         print("Existing data cleared.")
 
-        # --- 1. Create Departments ---
+       # --- 1. Create Departments ---
         print("Creating Departments...")
-        dept1 = Department(name="Cardiology")
-        dept2 = Department(name="Pediatrics")
-        dept3 = Department(name="General Surgery")
+        dept1 = Department(name="Cardiology", specialty="Cardiac Surgery") # Added specialty
+        dept2 = Department(name="Pediatrics", specialty="Neonatology")    # Added specialty
+        dept3 = Department(name="General Surgery") # This one remains without a direct specialty
         session.add_all([dept1, dept2, dept3])
-        session.commit() # Commit to get IDs for foreign keys
+        session.commit()
         print("Departments created.")
 
         # --- 2. Create Doctors ---
