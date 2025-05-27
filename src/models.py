@@ -21,7 +21,7 @@ class Patient(Base):
     #              It allows us to access parent object from the child and the child object from the parent
     # (cascade = "all, delete") => means that when a patient is deleted, their records and appointments are also deleted
     medical_records = relationship("MedicalRecord", back_populates="patient", cascade="all, delete")
-    appointments = relationship("Appointment", back_populates="patient", cascade="all, delete")
+    #appointments = relationship("Appointment", back_populates="patient", cascade="all, delete")
 
     # Polymorphic mapping => polymorphic mapping allows different subclasses (like InPatient and OutPatient) to share a common table (patients) 
     #                        and to store their extra fields in separate tables. 

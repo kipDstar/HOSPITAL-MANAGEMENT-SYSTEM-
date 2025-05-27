@@ -56,8 +56,8 @@ def add(name, dob, contact, type, room, admission, discharge, last_visit):
                 contact_info = contact,
                 type = 'inpatient',
                 room_number = room,
-                admission_date = datetime.strptime(admission, '%Y-%M-%D') if admission else None , 
-                discharge_date = datetime.strptime(discharge, '%Y-%M-%D') if discharge else None,
+                admission_date = datetime.strptime(admission, '%Y-%m-%d') if admission else None , 
+                discharge_date = datetime.strptime(discharge, '%Y-%m-%d') if discharge else None,
             )
 
         else:
@@ -66,7 +66,7 @@ def add(name, dob, contact, type, room, admission, discharge, last_visit):
                 date_of_birth = dob,
                 contact_info = contact,
                 type = 'outpatient',
-                last_visit_date = datetime.strptime(last_visit, '%Y-%M-%D') if last_visit else None
+                last_visit_date = datetime.strptime(last_visit, '%Y-%m-%d') if last_visit else None
             )
 
         # db.add(patient) => This stages (prepares) the patient object to be added to the database.
@@ -94,7 +94,7 @@ def add(name, dob, contact, type, room, admission, discharge, last_visit):
 
 
 # This defines the -----LIST COMMAND----- which lists all the patients
-@cli.command
+@cli.command()
 def list():
     """List all patients"""
     db = next(get_db())
@@ -110,7 +110,7 @@ def list():
 
 
 # This defines the -----DELETE COMMAND----- which deletes all the patients
-@cli.command
+@cli.command()
 # @click.argument => This tells Click (the CLI library) that your command will take one required 
 #                    argument from the command line:
 #                    *patient_id: an integer*
@@ -129,6 +129,7 @@ def delete(patient_id):
 
         if not patient:
             click.echo(f"No patient with ID {patient_id} was found")
+            return
 
         db.delete(patient)
         db.commit()
@@ -145,7 +146,7 @@ def delete(patient_id):
 
 
 # This defines -----UPDATE COMMAND-----  which updates patients information
-@cli.command
+@cli.command()
 @click.argument('patient_id', type = int) 
 @click.option('--name', default = None, help = 'New name')
 @click.option('--dob', default = None, help = 'New DOB (YYYY MM DD)')
@@ -162,6 +163,7 @@ def update(patient_id, name, dob, contact, room, admission, discharge, last_visi
         patient = db.get(Patient, patient_id)
         if not patient:
             click.echo(f"No patient with ID {patient_id} was found.")
+            return
         
         if name:
             patient.name = name 
@@ -177,14 +179,14 @@ def update(patient_id, name, dob, contact, room, admission, discharge, last_visi
                 patient.room_number = room
 
             if admission:
-                patient.admission_date = datetime.strptime(admission, '%Y-%M-%D')
+                patient.admission_date = datetime.strptime(admission, '%Y-%m-%d')
 
             if discharge:
-                patient.discharge_date = datetime.strptime(discharge, '%Y-%M-%D')
+                patient.discharge_date = datetime.strptime(discharge, '%Y-%m-%d')
 
         elif isinstance(patient, OutPatient):
             if last_visit:
-                patient.last_visit_date = datetime.strptime(last_visit, '%Y-%M-%D')
+                patient.last_visit_date = datetime.strptime(last_visit, '%Y-%m-%d')
 
         db.commit()
         click.echo(f"Patient ID: {patient_id} updated successfully!")
@@ -194,9 +196,34 @@ def update(patient_id, name, dob, contact, room, admission, discharge, last_visi
         click.echo(f"Error updating patient: {e}")
 
     finally:
-        db.close
+        db.close()
 
 
 
 if __name__ == '__main__':
     cli()
+
+
+
+
+# ---------- COMMANDS TO RUN -----------
+
+# The ADD COMMAND
+#      => python src/patient_commands.py add
+
+# The LIST COMMAND
+#      => python src/patient_commands.py list
+
+# The UPDATE COMMAND
+#      => python src/patient_commands.py update <patient_id> [--name NEW_NAME] [--contact NEW_CONTACT] [--dob YYYY-MM-DD]
+#      => python src/patient_commands.py update 1 --name "Natalie G" --contact "0712345678"
+
+# The DELETE COMMAND
+#      => python src/patient_commands.py delete <patient_id>
+#      => python src/patient_commands.py delete 3
+
+# To view all available commands
+#      => python src/patient_commands.py --help
+
+#  To view help for a specific command 
+#      => python src/patient_commands.py add --help
