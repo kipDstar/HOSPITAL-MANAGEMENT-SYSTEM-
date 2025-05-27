@@ -2,8 +2,8 @@
 
 from datetime import date, datetime, timedelta
 from sqlalchemy.orm import sessionmaker
-from .database import engine, Base, get_db  # Import engine, Base, and the session helper
-from .models import Patient, InPatient, OutPatient, Doctor, Department, Appointment, MedicalRecord # Import all your models
+from src.database import engine, Base, get_db  # Import engine, Base, and the session helper
+from src.models import Patient, InPatient, OutPatient, Doctor, Department, Appointment, MedicalRecord # Import all your models
 
 def seed_database():
     """
