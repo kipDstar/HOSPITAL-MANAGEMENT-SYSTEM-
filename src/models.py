@@ -83,4 +83,17 @@ class Appointment(Base):
 class MedicalRecord(Base):
     __tablename__ = 'medical_records'
     id = Column(Integer, primary_key=True)
+    # ForeignKey('patient.id'): This creates a foreign key relationship to the id column of the patient table.
+    patient_id = Column(Integer, ForeignKey('patient.id'), nullable=False)
+    diagnosis = Column(String, nullable=False)
+    treatment = Column(String)
+    record_date = Column(DateTime, default=datetime.utcnow)
+    # Datetime allows us to print both date and time based on the universal time(datetime.utcnow)
+
+
+    # Define relationship
+    # "Patient" refers to another class (assumed to represent the patient table).
+    # back_populates => "medical_records" means the Patient class should have a corresponding
+    #                    medical_records relationship defined as well, creating a two-way link.
     
+    patient = relationship("Patient", back_populates="medical_records")
