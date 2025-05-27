@@ -1,8 +1,9 @@
 from sqlalchemy import Column, Integer, String, Date, ForeignKey, DateTime
 #from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship, declarative_base
+from sqlalchemy.orm import relationship
 from datetime import datetime
-Base = declarative_base()
+#Base = declarative_base()
+from database import Base
 
 class Patient(Base):
     __tablename__ = 'patients'
@@ -84,7 +85,7 @@ class MedicalRecord(Base):
     __tablename__ = 'medical_records'
     id = Column(Integer, primary_key=True)
     # ForeignKey('patient.id'): This creates a foreign key relationship to the id column of the patient table.
-    patient_id = Column(Integer, ForeignKey('patient.id'), nullable=False)
+    patient_id = Column(Integer, ForeignKey('patients.id'), nullable=False)
     diagnosis = Column(String, nullable=False)
     treatment = Column(String)
     record_date = Column(DateTime, default=datetime.utcnow)
