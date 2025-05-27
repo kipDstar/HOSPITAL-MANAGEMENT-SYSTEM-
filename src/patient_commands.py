@@ -109,3 +109,38 @@ def list():
 
 
 
+# This defines the -----DELETE COMMAND----- which deletes all the patients
+@cli.command
+# @click.argument => This tells Click (the CLI library) that your command will take one required 
+#                    argument from the command line:
+#                    *patient_id: an integer*
+#                    This is not optional — it must be passed when running the command.
+@click.argument('patient_id', type = int)
+# Defines the actual command logic:
+# The function receives the argument (patient_id)
+def delete(patient_id):
+    """Delete a patient by ID"""
+    # Grabs a session object from your get_db() generator so you can interact with the database.
+    db = next(get_db())
+    
+    try:
+        #Uses SQLAlchemy’s .get() method to fetch a Patient with the given patient_id.
+        patient = db.get(Patient, patient_id)
+
+        if not patient:
+            click.echo(f"No patient with ID {patient_id} was found")
+
+        db.delete(patient)
+        db.commit()
+        click.echo(f"Patient with ID {patient_id} deleted.")
+
+    except Exception as e:
+        db.rollback()
+        click.echo(f"Error deleting a patient {e}")
+
+    finally:
+        db.close()
+
+
+
+
