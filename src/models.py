@@ -96,6 +96,68 @@ class Department(Base):
     def __repr__(self):
         head_name = self.head_doctor.name if self.head_doctor else 'None'
         return f"<Department(id={self.id}, name={self.name}, head_doctor_id='{self.head_doctor_id}', head='{head_name})>"
+    
+    #instance methods for departments
+    def update_info(self, session, name=None, head_doctor_id=None):
+        #what it does
+        """
+        updates the name or head doctor of a department
+        :param session: SQLAlchemy session to commit changes
+        :param name: New name for the department (is optional)
+        :param head_doctor_id: New head doctor ID for the department (which is optional)
+        """
+        if name is not None:
+            self.name = name
+        if head_doctor_id is not None:
+            doctor = Doctor.find_by_id(session, head_doctor_id) # to check if a doctor exists before adding him as head
+            if not doctor:
+                raise ValueError(f"Doctor with ID {head_doctor_id} does not exist.")
+            self.head_doctor_id = head_doctor_id
+        session.commit()
+    
+    def assign_head_doctor(self, session, doctor_id):
+        """
+        Assigns a head doctor to the department.
+        :param session: SQLAlchemy session to commit changes
+        :param doctor_id: ID of the doctor to be assigned as head
+        """
+        doctor = Doctor.find_by_id(session, doctor_id)
+        if not doctor:
+            raise ValueError(f"Doctor with ID {doctor_id} was not found in our system, consult ADMIN.")
+        self.head_doctor_id = doctor_id
+        session.commit()
+    
+    def unassign_head_doctor(self, session):
+        """
+        Unassigns the head doctor from the department.
+        :param session: SQLAlchemy session to commit changes
+        """
+        self.head_doctor_id = None
+        session.commit()
+    
+    def get_staff_count(self, session):
+        """
+        this returns the number of doctors in the department
+        """
+        return len(self.doctors)
+    
+    def assign_specialty(self, session, specialty):
+        """
+        Assigns a specialty to the department.
+        :param session: SQLAlchemy session to commit changes
+        :param specialty: Specialty to be assigned to the department
+        """
+        self.specialty = specialty
+        session.commit()
+
+    def specialty_doctors(self, session):
+        """
+        Returns a list of doctors in the department with the specified specialty.
+        :param session: SQLAlchemy session to query the database
+        :return: List of doctors with the specified specialty
+        """
+        return session.query(Doctor).filter(Doctor.department_id == self.id, Doctor.specialization == self.specialty).all()
+
 
 class Appointment(Base):
     __tablename__ = 'appointments'
