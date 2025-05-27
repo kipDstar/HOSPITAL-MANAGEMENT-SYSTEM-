@@ -1,16 +1,9 @@
-<<<<<<< HEAD
 from sqlalchemy import Column, Integer, String, ForeignKey, Date, DateTime, Text 
 #from sqlalchemy.ext.declarative import declarative_base
 from src.database import Base
 from sqlalchemy.orm import relationship
-#Base = declarative_base()
-=======
-from sqlalchemy import Column, Integer, String, Date, ForeignKey, DateTime
 #from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship, declarative_base
 from datetime import datetime
-Base = declarative_base()
->>>>>>> a0c1c0ffd7d5cd95ff7063c0ca3a4bc4adebd16e
 
 class Patient(Base):
     __tablename__ = 'patients'
@@ -111,4 +104,3 @@ class Appointment(Base):
 class MedicalRecord(Base):
     __tablename__ = 'medical_records'
     id = Column(Integer, primary_key=True)
-    
