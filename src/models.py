@@ -79,6 +79,8 @@ class Department(Base):
     __tablename__ = 'departments'
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False, unique=True)
+
+    specialty = Column(String, nullable=False)
     # the head_doctor_id id a foreign key but wwe start out with a simple column first then link it with a relationship later.
     # It is nullable because not all depts may have an assigned head doctor at the time of creation
     head_doctor_id = Column(Integer, ForeignKey('doctors.id'), nullable=True, unique=True) #unique=True ensures only 1 doctor can be a department head at a time
@@ -97,6 +99,43 @@ class Department(Base):
         head_name = self.head_doctor.name if self.head_doctor else 'None'
         return f"<Department(id={self.id}, name={self.name}, head_doctor_id='{self.head_doctor_id}', head='{head_name})>"
     
+    # class methods
+    @classmethod
+    def create(cls, session, name, specialty=None, head_doctor_id=None): # Updated to accept specialty
+        """
+        Creates a new Department in the database.
+        :param session: The SQLAlchemy session.
+        :param name: The name of the department (string).
+        :param specialty: The primary specialty of the department (string, optional).
+        :param head_doctor_id: Optional ID of the head doctor (integer).
+        :return: The newly created Department object.
+        """
+        department = cls(name=name, specialty=specialty, head_doctor_id=head_doctor_id)
+        session.add(department)
+        session.commit()
+        return department
+
+    @classmethod
+    def find_by_id(cls, session, department_id):
+        return session.query(cls).filter_by(id=department_id).first()
+
+    @classmethod
+    def find_by_name(cls, session, name):
+        return session.query(cls).filter_by(name=name).first()
+
+    @classmethod
+    def get_all(cls, session):
+        return session.query(cls).all()
+
+    @classmethod
+    def delete_by_id(cls, session, department_id):
+        department = cls.find_by_id(session, department_id)
+        if department:
+            session.delete(department)
+            session.commit()
+            return True
+        return False
+    
     #instance methods for departments
     def update_info(self, session, name=None, head_doctor_id=None):
         #what it does
@@ -114,6 +153,7 @@ class Department(Base):
                 raise ValueError(f"Doctor with ID {head_doctor_id} does not exist.")
             self.head_doctor_id = head_doctor_id
         session.commit()
+        
     
     def assign_head_doctor(self, session, doctor_id):
         """
