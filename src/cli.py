@@ -1,4 +1,7 @@
 import click
+from src.doctor_commands import doctor
+from src import appointment_commands
+
 
 # We are importing a file form database
 #    create_tables => creates the database tables
@@ -40,11 +43,13 @@ def seed():
 #registers commands from other files
 
 # Adds all commands from patient_commands.py to the CLI.(Allows us to run *python cli.py patient add*)
-cli.add_command(patient_commands.patient)
+#cli.add_command(patient_commands.patient)
 # Adds all commands from doctor_commands.py to the CLI.(Allows us to run *python cli.py doctor list*)
 cli.add_command(doctor_commands.doctor)
 # Adds all commands from department_commands.py to the CLI.(Allows us to run *python cli.py department delete 3*)
-cli.add_command(department_commands.department)
+#cli.add_command(department_commands.department)
+cli.add_command(appointment_commands.app_cli)
+
 
 
 # You will need to import (get_db) in all the command files
