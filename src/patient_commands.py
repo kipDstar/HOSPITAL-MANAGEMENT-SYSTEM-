@@ -40,6 +40,19 @@ def add(name, dob, contact, type, room, admission, discharge, last_visit):
     # This says: “give me the next (first) value from the generator,” which is your actual database session.
     # Now db is a usable SQLAlchemy session, and you can do things like: [db.query(Patient).all()]
 
+
+    if type == 'inpatient':
+        if room is None:
+            room = click.prompt('Room number', type=int)
+        if admission is None:
+            admission = click.prompt('Admission Date (YYYY-MM-DD)', default='', show_default=False)
+        if discharge is None:
+            discharge = click.prompt('Discharge Date (YYYY-MM-DD)', default='', show_default=False)
+    elif type == 'outpatient':
+        if last_visit is None:
+            last_visit = click.prompt('Last Visit Date (YYYY-MM-DD)', default='', show_default=False)
+
+
     db = next(get_db())
     # datetime.strptime(admission, '%Y-%M-%D) =>
     #                  'This converts the string (like "2024-06-01") into a proper datetime.date object.
@@ -281,32 +294,31 @@ if __name__ == '__main__':
 # ---------- COMMANDS TO RUN -----------
 
 # The ADD COMMAND
-#      => python src/patient_commands.py add
+#      => python -m src.cli patient add
 
 # The LIST COMMAND
-#      => python src/patient_commands.py list
+#      => python -m src.cli patient list
 
 # The UPDATE COMMAND
-#      => python src/patient_commands.py update <patient_id> [--name NEW_NAME] [--contact NEW_CONTACT] [--dob YYYY-MM-DD]
-#      => python src/patient_commands.py update 1 --name "Natalie G" --contact "0712345678"
+#      => python -m src.cli patient update <patient_id> [--name ...] [--dob ...] [--contact ...] [--room ...] [--admission ...] [--discharge ...] [--last_visit ...]
+#      => python -m src.cli patient update 1 --name "Updated Name" --contact "0711223344"
 
 # The DELETE COMMAND
-#      => python src/patient_commands.py delete <patient_id>
-#      => python src/patient_commands.py delete 3
+#      => python -m src.cli patient delete <patient_id>
+#      => python -m src.cli patient delete 2
 
 # To view all available commands
-#      => python src/patient_commands.py --help
+#      => python -m src.cli --help
 
-#  To view help for a specific command 
-#      => python src/patient_commands.py add --help
+#  To view help for a sub-class commands 
+#      => python -m src.cli patient --help
 
-
-# -------------------- MEDICAL RECORDS COMMANDS -------------------
+# -------------------- MEDICAL RECORDS COMMANDS --------------------
 # To add a medical record 
-#      => python src/patient_commands.py add-record 1 
+#      => python -m src.cli patient add-record <patient_id>
 
 # To list medical records
-#      => python src/patient_commands.py list-records
+#      => python -m src.cli patient list-records
 
 # To delete a medical record
-#      => python src/patient_commands.py delete-record 2
+#      => python -m src.cli patient delete-record <record_id>

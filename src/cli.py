@@ -51,3 +51,6 @@ cli.add_command(patient_commands.patient)
 
 
 # You will need to import (get_db) in all the command files
+
+if __name__ == '__main__':
+    cli()
