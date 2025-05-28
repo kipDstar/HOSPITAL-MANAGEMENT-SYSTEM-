@@ -1,12 +1,15 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 from config.settings import DATABASE_URL 
+from src.models import Base
+
+DATABASE_URL = "sqlite:///hospital.db"
 
 # Here we are creating a SQLAlchemy engine that will connect to the db and manages the connection pool and dialects, will ad a debug statemnt to print all statemnts to the console
 engine = create_engine(DATABASE_URL, echo=True)
 
 # next we create a session class that will be used to create sessions to the database
-Session = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 # A Session is a "holding zone" for all objects loaded or associated with the database.
 # 'autocommit=False': Transactions are not committed automatically. You need to call session.commit().
 # 'autoflush=False': Objects are not flushed to the database automatically before query operations.
@@ -31,12 +34,12 @@ def get_db():
     to get a fresh session.
     It's important to close the session when done (session.close()).
     """
-    session = Session()
+    db = SessionLocal()
     try:
-        yield session # Use 'yield' for a context manager pattern (but since we dont know much on that),
+        yield db # Use 'yield' for a context manager pattern (but since we dont know much on that),
                       # For now, a direct return is fine for simple CLI usage
     finally:
-        session.close()
+        db.close()
 
 # for robust (realer) applications we can add the following block
 from contextlib import contextmanager
