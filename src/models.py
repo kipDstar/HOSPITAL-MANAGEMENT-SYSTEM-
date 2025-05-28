@@ -3,7 +3,7 @@ from sqlalchemy import Column, Integer, String, Date, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 from datetime import datetime
 #Base = declarative_base()
-from database import Base
+from src.database import Base
 
 class Patient(Base):
     __tablename__ = 'patients'
@@ -56,6 +56,7 @@ class InPatient(Patient):
         'polymorphic_identity': 'inpatient'
     }
 
+    
 
 
 class OutPatient(Patient):
@@ -68,6 +69,8 @@ class OutPatient(Patient):
     __mapper_args__ = {
         'polymorphic_identity': 'outpatient'
     }
+    
+    
 
 class Doctor(Base):
     __tablename__ = 'doctors'

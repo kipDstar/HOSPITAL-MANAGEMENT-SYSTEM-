@@ -14,6 +14,7 @@ Session = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # Next we create a declarative base method to return a base class for ORM models to inherit from
 Base = declarative_base()
+
 def create_tables():
     """
     Create all tables in the database.

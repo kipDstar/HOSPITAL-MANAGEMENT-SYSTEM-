@@ -1,7 +1,7 @@
 import click
 from datetime import datetime
-from database import get_db
-from models import Patient, OutPatient, InPatient
+from src.database import get_db
+from src.models import Patient, OutPatient, InPatient, MedicalRecord
 
 import sys
 import os
@@ -12,9 +12,10 @@ from config.settings import DATABASE_URL
 
 @click.group()
 # Defines the group of CLI under patients with (cli) as the entry point of the group
-def cli():
+def patient():
     """Patient Management CLI"""
 
+# -------------------- PATIENT COMMANDS --------------------
 
 # This defines the -----ADD COMMAND------, which adds a new patient.
 # It creates a flag (like --type) for your CLI command.
@@ -24,7 +25,7 @@ def cli():
 #                 If the user enters anything else, they’ll see an error like:
 #                 (Error: Invalid value for '--type': 'visitor' is not one of 'inpatient', 'outpatient'.)
 # (default = None) => ensures that when a value is not provided it is filled to be automatically none
-@cli.command()
+@patient.command()
 @click.option('--name', prompt = 'Name', help = 'Patient Full Name')
 @click.option('--dob', prompt = 'Date of Birth (YYYY MM DD)', help = 'Patient birth date')
 @click.option('--contact', prompt = 'Contact', help = 'Patient contact')
@@ -94,7 +95,7 @@ def add(name, dob, contact, type, room, admission, discharge, last_visit):
 
 
 # This defines the -----LIST COMMAND----- which lists all the patients
-@cli.command()
+@patient.command()
 def list():
     """List all patients"""
     db = next(get_db())
@@ -110,7 +111,7 @@ def list():
 
 
 # This defines the -----DELETE COMMAND----- which deletes all the patients
-@cli.command()
+@patient.command()
 # @click.argument => This tells Click (the CLI library) that your command will take one required 
 #                    argument from the command line:
 #                    *patient_id: an integer*
@@ -146,7 +147,7 @@ def delete(patient_id):
 
 
 # This defines -----UPDATE COMMAND-----  which updates patients information
-@cli.command()
+@patient.command()
 @click.argument('patient_id', type = int) 
 @click.option('--name', default = None, help = 'New name')
 @click.option('--dob', default = None, help = 'New DOB (YYYY MM DD)')
@@ -200,8 +201,79 @@ def update(patient_id, name, dob, contact, room, admission, discharge, last_visi
 
 
 
+
+# -------------------- MEDICAL RECORDS COMMANDS --------------------
+# This defines the -----ADD MEDICAL RECORD COMMAND ------ which adds a patients medical record
+@patient.command()
+@click.argument('patient_id', type=int)
+@click.option('--diagnosis', prompt='Diagnosis', help='Diagnosis')
+@click.option('--treatment', prompt='Treatment', help='Treatment')
+@click.option('--record_date', default=None, help='Record Date (YYYY-MM-DD)')
+def add_record(patient_id, diagnosis, treatment, record_date):
+    """Add a medical record for a patient"""
+    db = next(get_db())
+    try:
+        patient = db.get(Patient, patient_id)
+        if not patient:
+            click.echo(f"No patient with ID {patient_id}")
+            return
+        record = MedicalRecord(
+            patient_id=patient_id,
+            diagnosis=diagnosis,
+            treatment=treatment,
+            record_date=datetime.strptime(record_date, '%Y-%m-%d') if record_date else datetime.utcnow()
+        )
+        db.add(record)
+        db.commit()
+        click.echo(f"Medical record for patient ID {patient_id} added.")
+    except Exception as e:
+        db.rollback()
+        click.echo(f"Error adding record: {e}")
+    finally:
+        db.close()
+
+
+# This defines the ----- LIST MEDICAL RECORD COMMAND ------ which lists all patients medical records
+@patient.command()
+def list_records():
+    """List all medical records"""
+    db = next(get_db())
+    try:
+        records = db.query(MedicalRecord).all()
+        for r in records:
+            click.echo(f"ID: {r.id}, Patient ID: {r.patient_id}, Diagnosis: {r.diagnosis}, Treatment: {r.treatment}, Date: {r.record_date}")
+    finally:
+        db.close()
+
+
+
+
+# This defines the ----- DELETE MEDICAL RECORD COMMAND ------ which deletes all patients medical records
+@patient.command()
+@click.argument('record_id', type=int)
+def delete_record(record_id):
+    """Delete a medical record by ID"""
+    db = next(get_db())
+    try:
+        record = db.get(MedicalRecord, record_id)
+        if not record:
+            click.echo(f"No record with ID {record_id}")
+            return
+        db.delete(record)
+        db.commit()
+
+        click.echo(f"Medical record ID {record_id} deleted.")
+
+    except Exception as e:
+        db.rollback()
+        click.echo(f"Error deleting record: {e}")
+
+    finally:
+        db.close()
+
+
 if __name__ == '__main__':
-    cli()
+    patient()
 
 
 
@@ -227,3 +299,14 @@ if __name__ == '__main__':
 
 #  To view help for a specific command 
 #      => python src/patient_commands.py add --help
+
+
+# -------------------- MEDICAL RECORDS COMMANDS -------------------
+# To add a medical record 
+#      => python src/patient_commands.py add-record 1 
+
+# To list medical records
+#      => python src/patient_commands.py list-records
+
+# To delete a medical record
+#      => python src/patient_commands.py delete-record 2
