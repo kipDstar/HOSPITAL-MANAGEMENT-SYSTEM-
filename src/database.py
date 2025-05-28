@@ -24,6 +24,7 @@ Session = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # Create a declarative base class for ORM models to inherit from.
 Base = declarative_base()
+import src.models # Import your models to ensure they are registered with the Base
 
 def create_tables():
     """

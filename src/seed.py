@@ -35,7 +35,8 @@ def seed_database():
         dept1 = Department(name="Cardiology", specialty="Cardiac Surgery") # Added specialty
         dept2 = Department(name="Pediatrics", specialty="Neonatology")    # Added specialty
         dept3 = Department(name="General Surgery") # This one remains without a direct specialty
-        session.add_all([dept1, dept2, dept3])
+        dept4 = Department(name="Dentistry", specialty="Orthodontics", head_doctor=None, id=4)
+        session.add_all([dept1, dept2, dept3, dept4])
         session.commit()
         print("Departments created.")
 
@@ -45,6 +46,7 @@ def seed_database():
         doctor2 = Doctor(name="Dr. John Doe", specialization="Pediatrician", department=dept2)
         doctor3 = Doctor(name="Dr. Emily White", specialization="Surgeon", department=dept3)
         doctor4 = Doctor(name="Dr. Michael Green", specialization="General Practitioner", department=dept1) # Another doctor in Cardiology
+        doctor5 = Doctor(name="Dr. Sarah Brown", specialization="Orthodontist", department = dept4) # Added a dentist
         session.add_all([doctor1, doctor2, doctor3, doctor4])
         session.commit()
         print("Doctors created.")

@@ -1,4 +1,5 @@
 import click
+from src.database import get_db
 
 @click.group()
 def patient():
