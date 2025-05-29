@@ -1,60 +1,67 @@
+# src/database.py
+
+import sys # Needed for sys.stderr and sys.exit
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 from config.settings import DATABASE_URL 
 from src.models import Base
 
-DATABASE_URL = "sqlite:///hospital.db"
 
-# Here we are creating a SQLAlchemy engine that will connect to the db and manages the connection pool and dialects, will ad a debug statemnt to print all statemnts to the console
-engine = create_engine(DATABASE_URL, echo=True)
+# For now, DATABASE_URL is hardcoded for debugging.
+DATABASE_URL = "sqlite:///hospital.db" # This will create hospital.db in your project root
 
-# next we create a session class that will be used to create sessions to the database
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-# A Session is a "holding zone" for all objects loaded or associated with the database.
-# 'autocommit=False': Transactions are not committed automatically. You need to call session.commit().
-# 'autoflush=False': Objects are not flushed to the database automatically before query operations.
-# 'bind=engine': Binds the session to our database engine.
+try:
+    # Added explicit flush=True to ensure immediate printing
+    print("DEBUG: Attempting to create engine...", file=sys.stdout, flush=True)
+    engine = create_engine(DATABASE_URL, echo=True)
+    print("DEBUG: Engine created successfully.", file=sys.stdout, flush=True)
+except Exception as e:
+    # This print statement should be seen if any error occurs during engine creation
+    print(f"FATAL ERROR: Failed to create SQLAlchemy engine: {e}", file=sys.stderr, flush=True)
+    import traceback # Ensure this is imported for the traceback
+    traceback.print_exc(file=sys.stderr) # Prints full traceback
+    sys.exit(1) # Forces the script to exit with an error code
 
-# Next we create a declarative base method to return a base class for ORM models to inherit from
+
+# Create a session class to interact with the database.
+Session = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+
+# Create a declarative base class for ORM models to inherit from.
 Base = declarative_base()
+
 def create_tables():
     """
-    Create all tables in the database.
-    This function uses the Base metadata to create all tables defined in the ORM models.
+    Creates all database tables defined in the ORM models.
     """
-    print(f"Attempting to create tables in the database at the following URL: {DATABASE_URL}...")
+    print(f"Attempting to create tables in the database at URL: {DATABASE_URL}...", file=sys.stdout, flush=True)
     Base.metadata.create_all(engine)
-    print("Tables created successfully.")
+    print("Tables created successfully.", file=sys.stdout, flush=True)
 
-# we create a helper function to get a new database session
+# Helper function to get a new database session instance.
 def get_db():
     """
-    Returns a new SQLAlchemy session instance.
-    This function is called whenever a database operation is needed
-    to get a fresh session.
-    It's important to close the session when done (session.close()).
+    Provides a new SQLAlchemy session instance.
     """
-    db = SessionLocal()
+    session = session()
     try:
-        yield db # Use 'yield' for a context manager pattern (but since we dont know much on that),
-                      # For now, a direct return is fine for simple CLI usage
+        yield session
     finally:
         db.close()
 
-# for robust (realer) applications we can add the following block
+# Context manager for more robust session handling.
 from contextlib import contextmanager
 @contextmanager
 def get_db_context():
     """
-    Context manager for database sessions.
-    This function provides a context manager that automatically handles session creation and closure.
+    Provides a context manager for database sessions.
     """
     session = Session()
     try:
         yield session
-    except Exception: # If an exception occurs, rollback the session to avoid committing partial changes
-        print("An error occurred, rolling back the session.")
-        session.rollback() # Rollback the session in case of an error meaning the transaction will not be committed
+    except Exception:
+        print("An error occurred, rolling back the session.", file=sys.stderr, flush=True)
+        session.rollback()
         raise
     finally:
         session.close()

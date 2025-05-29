@@ -74,3 +74,4 @@ def filter(specialization):
         docs = session.query(Doctor).filter(Doctor.specialization.ilike(f'%{specialization}%')).all()
         for d in docs:
             click.echo(f'{d.id}: {d.name} ({d.specialization})')
+
