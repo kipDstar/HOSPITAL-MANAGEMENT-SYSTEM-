@@ -1,4 +1,7 @@
-print(f"DEBUG: Entering src/cli.py execution.")
+
+#print(f"DEBUG: Entering src/cli.py execution.")
+
+
 import click
 
 # We are importing a file form database
@@ -37,7 +40,7 @@ def createtables():
 
 
 # Follows same structure as the getdb function
-@cli.command 
+@cli.command() 
 def seed():
     """Populate Dummy with fake data"""
     seed_database()
@@ -48,11 +51,11 @@ def seed():
 # Adds all commands from patient_commands.py to the CLI.(Allows us to run *python cli.py patient add*)
 cli.add_command(patient_commands.patient)
 # Adds all commands from doctor_commands.py to the CLI.(Allows us to run *python cli.py doctor list*)
-cli.add_command(doctor_commands.doctor)
+#cli.add_command(doctor_commands.doctor)
 # Adds all commands from department_commands.py to the CLI.(Allows us to run *python cli.py department delete 3*)
-cli.add_command(department_commands.department)
+#cli.add_command(department_commands.department)
 
 if __name__ == '__main__':
     cli()
 
-# You will need to import (get_db) in all the command files
+

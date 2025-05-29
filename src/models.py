@@ -26,7 +26,6 @@ class Patient(Base):
 
     medical_records = relationship("MedicalRecord", back_populates="patient", cascade="all, delete-orphan")
     appointments = relationship("Appointment", back_populates="patient", cascade="all, delete-orphan")
-
     __mapper_args__ = {
         'polymorphic_on': patient_type,
         'polymorphic_identity': 'patient'
@@ -60,10 +59,11 @@ class OutPatient(Patient):
     __mapper_args__ = {
         'polymorphic_identity': PatientType.OUTPATIENT
     }
+    
+    
 
     def __repr__(self):
         return f"<OutPatient(id={self.id}, name='{self.name}', last_visit='{self.last_visit_date}')>"
-
 # --- Doctor Model ---
 class Doctor(Base):
     __tablename__ = 'doctors'
@@ -72,9 +72,8 @@ class Doctor(Base):
     specialization = Column(String)
     contact_info = Column(String)
     department_id = Column(Integer, ForeignKey('departments.id')) # Foreign key to link to Department
-
     # Relationships
-    department = relationship("Department", back_populates="doctors", foreign_keys=[department_id]) # THIS WAS PREVIOUSLY FIXED
+    department = relationship("Department", back_populates="doctors", foreign_keys=[department_id]) 
     appointments = relationship("Appointment", back_populates="doctor", cascade="all, delete-orphan")
     medical_records = relationship("MedicalRecord", back_populates="doctor", cascade="all, delete-orphan")
 
@@ -210,3 +209,4 @@ class MedicalRecord(Base):
 
     def __repr__(self):
         return f"<MedicalRecord(id={self.id}, patient_id={self.patient_id}, diagnosis='{self.diagnosis[:20]}...')>"
+
