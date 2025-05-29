@@ -32,6 +32,7 @@ class Patient(Base):
         'polymorphic_identity': 'patient'
     }
 
+
     def __repr__(self):
         return f"<Patient(id={self.id}, name='{self.name}', type='{self.patient_type.value}')>"
 
@@ -49,6 +50,7 @@ class InPatient(Patient):
 
     def __repr__(self):
         return f"<InPatient(id={self.id}, name='{self.name}', room='{self.room_number}')>"
+
 
 
 # --- OutPatient Model ---
@@ -74,7 +76,7 @@ class Doctor(Base):
     department_id = Column(Integer, ForeignKey('departments.id')) # Foreign key to link to Department
 
     # Relationships
-    department = relationship("Department", back_populates="doctors", foreign_keys=[department_id]) # THIS WAS PREVIOUSLY FIXED
+    department = relationship("Department", back_populates="doctors", foreign_keys=[department_id]) 
     appointments = relationship("Appointment", back_populates="doctor", cascade="all, delete-orphan")
     medical_records = relationship("MedicalRecord", back_populates="doctor", cascade="all, delete-orphan")
 
@@ -83,6 +85,7 @@ class Doctor(Base):
         back_populates="head_doctor",
         foreign_keys="[Department.head_doctor_id]"
     )
+
 
     def __repr__(self):
         return f"<Doctor(id={self.id}, name='{self.name}', spec='{self.specialization}')>"
@@ -96,6 +99,7 @@ class Doctor(Base):
 class Department(Base):
     __tablename__ = 'departments'
     id = Column(Integer, primary_key=True)
+
     name = Column(String, nullable=False, unique=True)
     specialty = Column(String, nullable=True)
 
@@ -192,6 +196,7 @@ class Appointment(Base):
     patient = relationship("Patient", back_populates="appointments")
     doctor = relationship("Doctor", back_populates="appointments")
 
+
     def __repr__(self):
         return f"<Appointment(id={self.id}, patient_id={self.patient_id}, doctor_id={self.doctor_id}, date='{self.appointment_datetime.strftime('%Y-%m-%d %H:%M')}')>"
 
@@ -210,3 +215,4 @@ class MedicalRecord(Base):
 
     def __repr__(self):
         return f"<MedicalRecord(id={self.id}, patient_id={self.patient_id}, diagnosis='{self.diagnosis[:20]}...')>"
+

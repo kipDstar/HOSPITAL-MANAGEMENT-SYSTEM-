@@ -1,9 +1,12 @@
 # This script is meant to seed the database with initial data.
 
+# src/seed.py
+
 from datetime import date, datetime, timedelta
 from sqlalchemy.orm import sessionmaker
 from src.database import engine, Base, get_db  # Import engine, Base, and the session helper
 from src.models import Patient, InPatient, OutPatient, Doctor, Department, Appointment, MedicalRecord # Import all your models
+
 
 def seed_database():
     """
@@ -59,6 +62,7 @@ def seed_database():
 
         # --- 3. Create Patients (InPatient and OutPatient) ---
         print("Creating Patients...")
+
         patient1 = InPatient(name="Alice Johnson", date_of_birth=date(1985, 3, 10), contact_info="alice@example.com", admission_date=date(2023, 10, 1), room_number="101A")
         patient2 = OutPatient(name="Bob Williams", date_of_birth=date(1990, 7, 25), contact_info="bob@example.com", last_visit_date=date(2024, 1, 15))
         patient3 = InPatient(name="Carol Davis", date_of_birth=date(1970, 1, 1), contact_info="carol@example.com", admission_date=date(2024, 1, 10), room_number="203B")
@@ -72,10 +76,10 @@ def seed_database():
         # Today's date for appointments
         today = date.today()
         # Ensure times are specific for demonstration
-        appointment1 = Appointment(patient=patient1, doctor=doctor1, appointment_datetime=datetime.combine(today, datetime.min.time().replace(hour=10, minute=0)), reason="Routine check-up")
-        appointment2 = Appointment(patient=patient2, doctor=doctor2, appointment_datetime=datetime.combine(today, datetime.min.time().replace(hour=11, minute=30)), reason="Child flu symptoms")
-        appointment3 = Appointment(patient=patient3, doctor=doctor3, appointment_datetime=datetime.combine(today + timedelta(days=1), datetime.min.time().replace(hour=9, minute=0)), reason="Pre-surgery consultation")
-        appointment4 = Appointment(patient=patient4, doctor=doctor4, appointment_datetime=datetime.combine(today, datetime.min.time().replace(hour=14, minute=0)), reason="Follow-up")
+        appointment1 = Appointment(patient=patient1, doctor=doctor1, appointment_date=datetime.combine(today, datetime.min.time().replace(hour=10, minute=0)), reason="Routine check-up")
+        appointment2 = Appointment(patient=patient2, doctor=doctor2, appointment_date=datetime.combine(today, datetime.min.time().replace(hour=11, minute=30)), reason="Child flu symptoms")
+        appointment3 = Appointment(patient=patient3, doctor=doctor3, appointment_date=datetime.combine(today + timedelta(days=1), datetime.min.time().replace(hour=9, minute=0)), reason="Pre-surgery consultation")
+        appointment4 = Appointment(patient=patient4, doctor=doctor4, appointment_date=datetime.combine(today, datetime.min.time().replace(hour=14, minute=0)), reason="Follow-up")
         session.add_all([appointment1, appointment2, appointment3, appointment4])
         session.commit()
         print("Appointments created.")

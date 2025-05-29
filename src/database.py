@@ -3,6 +3,9 @@
 import sys # Needed for sys.stderr and sys.exit
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
+from config.settings import DATABASE_URL 
+from src.models import Base
+
 
 # For now, DATABASE_URL is hardcoded for debugging.
 DATABASE_URL = "sqlite:///hospital.db" # This will create hospital.db in your project root
@@ -19,8 +22,10 @@ except Exception as e:
     traceback.print_exc(file=sys.stderr) # Prints full traceback
     sys.exit(1) # Forces the script to exit with an error code
 
+
 # Create a session class to interact with the database.
 Session = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
 
 # Create a declarative base class for ORM models to inherit from.
 Base = declarative_base()
@@ -38,11 +43,11 @@ def get_db():
     """
     Provides a new SQLAlchemy session instance.
     """
-    session = Session()
+    session = session()
     try:
         yield session
     finally:
-        session.close()
+        db.close()
 
 # Context manager for more robust session handling.
 from contextlib import contextmanager
