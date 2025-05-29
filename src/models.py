@@ -1,9 +1,7 @@
-
 from sqlalchemy import Column, Integer, String, ForeignKey, Date, DateTime, Text, Enum as SQLEnum
 from src.database import Base
 from sqlalchemy.orm import relationship
 from datetime import datetime, date
-
 
 import enum
 
@@ -28,8 +26,6 @@ class Patient(Base):
 
     medical_records = relationship("MedicalRecord", back_populates="patient", cascade="all, delete-orphan")
     appointments = relationship("Appointment", back_populates="patient", cascade="all, delete-orphan")
-
-
     __mapper_args__ = {
         'polymorphic_on': patient_type,
         'polymorphic_identity': 'patient'
@@ -68,7 +64,6 @@ class OutPatient(Patient):
 
     def __repr__(self):
         return f"<OutPatient(id={self.id}, name='{self.name}', last_visit='{self.last_visit_date}')>"
-
 # --- Doctor Model ---
 class Doctor(Base):
     __tablename__ = 'doctors'
@@ -77,9 +72,8 @@ class Doctor(Base):
     specialization = Column(String)
     contact_info = Column(String)
     department_id = Column(Integer, ForeignKey('departments.id')) # Foreign key to link to Department
-
     # Relationships
-    department = relationship("Department", back_populates="doctors", foreign_keys=[department_id]) # THIS WAS PREVIOUSLY FIXED
+    department = relationship("Department", back_populates="doctors", foreign_keys=[department_id]) 
     appointments = relationship("Appointment", back_populates="doctor", cascade="all, delete-orphan")
     medical_records = relationship("MedicalRecord", back_populates="doctor", cascade="all, delete-orphan")
 
@@ -204,7 +198,6 @@ class Appointment(Base):
 class MedicalRecord(Base):
     __tablename__ = 'medical_records'
     id = Column(Integer, primary_key=True)
-
     patient_id = Column(Integer, ForeignKey('patients.id'), nullable=False)
     doctor_id = Column(Integer, ForeignKey('doctors.id'), nullable=False)
     record_date = Column(Date, default=date.today)

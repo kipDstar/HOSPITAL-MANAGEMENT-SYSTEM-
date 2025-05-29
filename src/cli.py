@@ -1,4 +1,7 @@
+
 #print(f"DEBUG: Entering src/cli.py execution.")
+
+
 import click
 
 # We are importing a file form database
@@ -15,7 +18,6 @@ import src.models
 # This function will be the main command group for the app.(Stores related commands)
 @click.group()
 @click.pass_context
-
 # Defines the cli() function — which is the main entry point for your CLI.
 def cli(ctx):
     ctx.obj = {}
@@ -25,13 +27,12 @@ def cli(ctx):
 
 
 # Registers a new CLI command (in this case, initdb).[It allows us to run *python cli.py getdb*]
-@cli.command() 
-# This function will create your database tables.
+@cli.command 
+# This function will create your database tables. initialize the schema
 def createtables():
     """Initialized Database Tables"""
     # get_db => Actually runs the logic to create tables using SQLAlchemy.
-    print('DEBUG: calling the create tables function now')
-
+    print("DEBUG: Calling create_tables function...")
     create_tables()
     # Prints a success message to the terminal.(just like print())
     click.echo("Database Tables Successfully Created")
@@ -57,7 +58,4 @@ cli.add_command(patient_commands.patient)
 if __name__ == '__main__':
     cli()
 
-# You will need to import (get_db) in all the command files
 
-if __name__ == '__main__':
-    cli()
