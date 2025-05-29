@@ -1,3 +1,14 @@
 .env
 hospital.db
 __pycache__
+config/__pycache__/__init__.cpython-313.pyc
+config/__pycache__/__init__.cpython-313.pyc
+config/__pycache__/__init__.cpython-313.pyc
+config/__pycache__/__init__.cpython-313.pyc
+src/__pycache__/__init__.cpython-313.pyc
+src/__pycache__/models.cpython-313.pyc
+src/__pycache__/doctor_commands.cpython-313.pyc
+src/__pycache__/database.cpython-313.pyc
+src/__pycache__/cli.cpython-313.pyc
+src/__pycache__/__init__.cpython-313.pyc
+src/__pycache__/__init__.cpython-313.pyc
