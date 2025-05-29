@@ -13,9 +13,13 @@ import src.models
 
 
 # This function will be the main command group for the app.(Stores related commands)
-@click.group() 
+@click.group()
+@click.pass_context
+
 # Defines the cli() function — which is the main entry point for your CLI.
-def cli():
+def cli(ctx):
+    ctx.obj = {}
+    pass
     # This is the CLI description(it appears when one runs python cli.py --help)
     """Hospital Management CLI"""
 
@@ -27,6 +31,7 @@ def createtables():
     """Initialized Database Tables"""
     # get_db => Actually runs the logic to create tables using SQLAlchemy.
     print('DEBUG: calling the create tables function now')
+
     create_tables()
     # Prints a success message to the terminal.(just like print())
     click.echo("Database Tables Successfully Created")
@@ -49,6 +54,8 @@ cli.add_command(patient_commands.patient)
 # Adds all commands from department_commands.py to the CLI.(Allows us to run *python cli.py department delete 3*)
 #cli.add_command(department_commands.department)
 
+if __name__ == '__main__':
+    cli()
 
 # You will need to import (get_db) in all the command files
 

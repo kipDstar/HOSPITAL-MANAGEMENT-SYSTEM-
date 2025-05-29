@@ -322,3 +322,4 @@ if __name__ == '__main__':
 
 # To delete a medical record
 #      => python -m src.cli patient delete-record <record_id>
+
