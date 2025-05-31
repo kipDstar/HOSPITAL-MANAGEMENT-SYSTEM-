@@ -11,7 +11,7 @@ from src.database import create_tables
 from src.seed import seed_database
 
 # This imports the files that define extra commands(These files hold organized subcommands like add, list, or update)
-from src import patient_commands, doctor_commands, department_commands
+from src import patient_commands, doctor_commands, department_commands, appointment_commands
 import src.models
 
 
@@ -54,6 +54,7 @@ cli.add_command(patient_commands.patient)
 cli.add_command(doctor_commands.doctor)
 # Adds all commands from department_commands.py to the CLI.(Allows us to run *python cli.py department delete 3*)
 cli.add_command(department_commands.department)
+cli.add_command(appointment_commands.appointment)
 
 if __name__ == '__main__':
     cli()

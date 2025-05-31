@@ -1,6 +1,6 @@
 import click
 from src.database import get_db
-from src.models import Doctor, Department, Patient
+from src.models import Doctor, Department, Patient, Appointment
 
 import sys
 import os
@@ -124,7 +124,8 @@ def filter(specialization):
         click.echo(f"Error filtering doctors: {e}", err=True)
     finally:
         db.close()
-    
+
+
 if __name__ == '__main__':
     doctor()
 # This code defines a CLI for managing doctors in a hospital management system.
