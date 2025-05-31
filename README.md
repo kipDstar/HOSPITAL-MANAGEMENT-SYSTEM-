@@ -6,51 +6,77 @@ A full-stack web application designed to manage hospital operations, including d
 This Hospital Management System offers the following key functionalities:
 ##Department Management:
 Create, View, Edit, Delete: Full CRUD operations for hospital departments.
+
 Head Doctor Assignment: Assign and reassign a specific doctor as the head of a department.
+
 Department Overview: View details like department name, specialty, head doctor, and count of doctors/patients assigned to it.
+
 ##Doctor Management:
 Create, View, Edit, Delete: Full CRUD operations for doctor profiles.
+
 Specialization & Department Assignment: Track doctor's specialization and the department they primarily work in.
+
 ##Patient Management (Admin Side):
 Register Patients: Manually add new patient records with personal details, contact info, and patient type (Inpatient/Outpatient).
+
 Inpatient/Outpatient Details: Capture specific information based on patient type (e.g., room number, admission/discharge dates for inpatients; last visit date for outpatients).
+
 Doctor & Department Assignment: Assign patients to specific doctors and departments.
+
 View, Edit, Delete: Comprehensive management of existing patient records.
+
 ##Patient Self-Registration:
 New Patient Onboarding: A dedicated interface allowing new patients to register themselves by providing basic personal and contact information. Self-registered patients are initially classified as outpatients.
 
 🚀 Techstack:
 This project leverages a modern full-stack architecture:
+
 Backend:
 Flask: A lightweight Python web framework for building the RESTful API.
+
 SQLAlchemy: Python SQL toolkit and Object-Relational Mapper (ORM) for interacting with the database.
+
 SQLite: A file-based SQL database used for development.
+
 Flask-CORS: Enables Cross-Origin Resource Sharing for seamless communication with the frontend.
+
 Pipenv: A dependency management tool for Python projects.
+
+
 Frontend:
 React: A JavaScript library for building interactive user interfaces.
+
 Vite: A fast build tool that provides a rapid development environment for React.
+
 Tailwind CSS: A utility-first CSS framework for rapid and responsive UI styling.
+
 
 ⚙️ Setup Instructions
 Follow these steps to get the project up and running on your local machine.
+
 ##Prerequisites
 Before you begin, ensure you have the following installed:
+
 Python 3.8+: Download Python 
+
 Node.js (LTS recommended) & npm: Download Node.js
+
 Flask: pip install flask
+
 Flask-cors: pip install flask_cors
-Pipenv: Install globally using pip:
-pip install pipenv
+
+Pipenv: Install globally using pip: pip install pipenv
 
 
 1. Backend Setup
 Clone the Repository:
+
 Navigate to your desired development directory and clone your project repository (assuming your backend is part of a larger repo or is the root of HOSPITAL-MANAGEMENT-SYSTEM-):
+
 git clone <your-repo-url>
 cd HOSPITAL-MANAGEMENT-SYSTEM-
 
-(If your backend is nested, e.g., HOSPITAL-MANAGEMENT-SYSTEM-/backend, adjust cd accordingly.)
+
 Install Python Dependencies:
 pipenv install
 
@@ -184,11 +210,16 @@ python -m src.cli patient delete 5
 
 ☁️ Deployment
 This project has been tested for deployment on platforms like Render.
+
 Backend Deployment: Deploy your Flask API as a "Web Service" on Render. Ensure your Procfile (if used) points to your Flask app (e.g., web: gunicorn src.api:app).
+
 Frontend Deployment: Deploy your React application as a "Static Site" on Render.
+
 Build Command: npm run build
 Publish Directory: dist
-Update API Base URL: Crucially, once your backend API is deployed on Render, you have to update the API_BASE_URL in frontend-hms/src/App.jsx to point to your live Render backend API URL (e.g., https://your-hms-api.onrender.com). Then, redeploy your frontend.
+
+Update API Base URL: Crucially, once your backend API is deployed on Render, you have to update the API_BASE_URL in frontend-hms/src/App.jsx to point to your live Render backend API URL (e.g., https://your-hms-api.onrender.com). 
+Then, redeploy your frontend.
 
 🚀 Future Enhancements
 1. Authentication & Authorization: Implement user login, roles (Admin, Doctor, Patient), and restrict access to certain functionalities based on roles.
