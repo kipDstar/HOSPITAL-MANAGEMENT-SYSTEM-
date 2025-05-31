@@ -9,9 +9,9 @@ def department():
 
 @department.command('add')
 @click.option('--name', required=True, help="Name of the department.")
-@click.option('--specialty', help="Primary specialty of the department (e.g., 'Cardiology').") # New option
+@click.option('--specialty', help="Primary specialty of the department (e.g., 'Cardiology').") 
 @click.option('--head-doctor-id', type=int, help="ID of the doctor to assign as head (optional).")
-def add_department(name, specialty, head_doctor_id): # Updated signature
+def add_department(name, specialty, head_doctor_id): 
     """Adds a new department."""
     session = next(get_db())
     try:
@@ -44,7 +44,7 @@ def list_departments():
         click.echo("--- Departments ---")
         for dept in departments:
             head_name = dept.head_doctor.name if dept.head_doctor else "None"
-            # Display the new specialty column
+            # Display the specialty column
             dept_specialty = dept.specialty if dept.specialty else "None"
             click.echo(f"ID: {dept.id}, Name: {dept.name}, Specialty: {dept_specialty}, Head: {head_name}")
         click.echo("-------------------")
@@ -82,7 +82,7 @@ def show_department(department_id):
                 click.echo(f"  - ID: {doctor.id}, Name: {doctor.name}, Specialization: {doctor.specialization}")
         else:
             click.echo("No doctors assigned to this department.")
-        click.echo("------*-----*-----*-----*--------*-------")
+        click.echo("------------------------------------")
     except Exception as e:
         click.echo(f"Error showing department: {e}", err=True)
     finally:
@@ -91,7 +91,7 @@ def show_department(department_id):
 @department.command('update')
 @click.argument('department_id', type=int)
 @click.option('--name', help="New name for the department.")
-@click.option('--specialty', help="New primary specialty for the department.") # New option
+@click.option('--specialty', help="New primary specialty for the department.") # ption
 @click.option('--head-doctor-id', type=int, help="New head doctor ID for the department.")
 def update_department(department_id, name, specialty, head_doctor_id): # Updated signature
     """Updates an existing department's name, specialty, or head doctor."""
@@ -210,8 +210,6 @@ def list_department_staff(department_id):
     finally:
         session.close()
 
-# --- New Innovative Department Commands based on your additions ---
-
 @department.command('assign-dept-specialty')
 @click.argument('department_id', type=int)
 @click.argument('specialty_name', type=str)
@@ -224,7 +222,7 @@ def assign_department_specialty_command(department_id, specialty_name):
             click.echo(f"Department with ID {department_id} not found.", err=True)
             return
         
-        dept.assign_specialty(session, specialty_name) # Call your new instance method
+        dept.assign_specialty(session, specialty_name) # Call  new instance method
         click.echo(f"Specialty '{specialty_name}' assigned to Department '{dept.name}'.")
     except Exception as e:
         click.echo(f"Error assigning department specialty: {e}", err=True)
@@ -248,7 +246,7 @@ def list_department_specialty_doctors_command(department_id):
             click.echo(f"Department '{dept.name}' has no primary specialty assigned to filter doctors by.", err=True)
             return
 
-        matching_doctors = dept.specialty_doctors(session) # Call your new instance method
+        matching_doctors = dept.specialty_doctors(session) # Call  new instance method
 
         if not matching_doctors:
             click.echo(f"No doctors found in Department '{dept.name}' with specialty '{dept.specialty}'.")
