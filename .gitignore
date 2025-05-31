@@ -17,3 +17,5 @@ src/__init__.py
 config/__pycache__/__init__.cpython-313.pyc
 src/__pycache__/department_commands.cpython-313.pyc
 src/__pycache__/doctor_commands.cpython-313.pyc
+hospital.db
+hospital.db

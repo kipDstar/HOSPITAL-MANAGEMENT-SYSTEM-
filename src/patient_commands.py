@@ -1,7 +1,8 @@
 import click
 from datetime import datetime
 from src.database import get_db
-from src.models import Patient, OutPatient, InPatient, MedicalRecord
+from src.models import Patient, OutPatient, InPatient, MedicalRecord, Doctor
+from src.models import PatientType
 
 import sys
 import os
@@ -63,12 +64,14 @@ def add(name, dob, contact, type, room, admission, discharge, last_visit):
 
 
     try: 
+
+        dob_date = datetime.strptime(dob, '%Y-%m-%d').date()
         if type == 'inpatient':
             patient = InPatient(
                 name = name,
-                date_of_birth = dob,
+                date_of_birth = dob_date,
                 contact_info = contact,
-                type = 'inpatient',
+                patient_type=PatientType.INPATIENT,
                 room_number = room,
                 admission_date = datetime.strptime(admission, '%Y-%m-%d') if admission else None , 
                 discharge_date = datetime.strptime(discharge, '%Y-%m-%d') if discharge else None,
@@ -77,9 +80,9 @@ def add(name, dob, contact, type, room, admission, discharge, last_visit):
         else:
             patient = OutPatient(
                 name = name,
-                date_of_birth = dob,
+                date_of_birth = dob_date,
                 contact_info = contact,
-                type = 'outpatient',
+                patient_type=PatientType.OUTPATIENT,
                 last_visit_date = datetime.strptime(last_visit, '%Y-%m-%d') if last_visit else None
             )
 
@@ -115,7 +118,7 @@ def list():
     try: 
         patients = db.query(Patient).all()
         for p in patients:
-            click.echo(f"ID: {p.id}, Name: {p.name}, Type: {p.type}, DOB: {p.date_of_birth}" )
+            click.echo(f"ID: {p.id}, Name: {p.name}, Type: {p.patient_type.value}, DOB: {p.date_of_birth}" )
     
     finally:
         db.close()
@@ -219,10 +222,11 @@ def update(patient_id, name, dob, contact, room, admission, discharge, last_visi
 # This defines the -----ADD MEDICAL RECORD COMMAND ------ which adds a patients medical record
 @patient.command()
 @click.argument('patient_id', type=int)
+@click.option('--doctor_id', prompt='Doctor ID', type=int, help='Doctor ID')
 @click.option('--diagnosis', prompt='Diagnosis', help='Diagnosis')
 @click.option('--treatment', prompt='Treatment', help='Treatment')
 @click.option('--record_date', default=None, help='Record Date (YYYY-MM-DD)')
-def add_record(patient_id, diagnosis, treatment, record_date):
+def add_record(patient_id, doctor_id, diagnosis, treatment, record_date):
     """Add a medical record for a patient"""
     db = next(get_db())
     try:
@@ -230,8 +234,14 @@ def add_record(patient_id, diagnosis, treatment, record_date):
         if not patient:
             click.echo(f"No patient with ID {patient_id}")
             return
+        
+        doctor = db.get(Doctor, doctor_id)
+        if not doctor:
+            click.echo(f"No doctor with ID {doctor_id}")
+            return
         record = MedicalRecord(
             patient_id=patient_id,
+            doctor_id=doctor_id,
             diagnosis=diagnosis,
             treatment=treatment,
             record_date=datetime.strptime(record_date, '%Y-%m-%d') if record_date else datetime.utcnow()
