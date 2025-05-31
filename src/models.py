@@ -31,6 +31,11 @@ class Patient(Base):
         'polymorphic_identity': 'patient'
     }
 
+    @classmethod
+    def find_by_id(cls, session, patient_id):
+        return session.query(cls).filter_by(id=patient_id).first()
+
+
     def __repr__(self):
         return f"<Patient(id={self.id}, name='{self.name}', type='{self.patient_type.value}')>"
 
