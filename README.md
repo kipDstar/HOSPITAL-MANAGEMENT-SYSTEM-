@@ -1,5 +1,7 @@
 Hospital Management System (HMS)
+
 A full-stack web application designed to manage hospital operations, including departments, medical staff, and patient records. The system provides administrative interfaces for comprehensive data management and a patient-facing portal for self-registration.
+
 ✨ Features
 This Hospital Management System offers the following key functionalities:
 ##Department Management:
@@ -16,7 +18,8 @@ Doctor & Department Assignment: Assign patients to specific doctors and departme
 View, Edit, Delete: Comprehensive management of existing patient records.
 ##Patient Self-Registration:
 New Patient Onboarding: A dedicated interface allowing new patients to register themselves by providing basic personal and contact information. Self-registered patients are initially classified as outpatients.
-🚀 Technologies Used
+
+🚀 Techstack:
 This project leverages a modern full-stack architecture:
 Backend:
 Flask: A lightweight Python web framework for building the RESTful API.
@@ -28,6 +31,7 @@ Frontend:
 React: A JavaScript library for building interactive user interfaces.
 Vite: A fast build tool that provides a rapid development environment for React.
 Tailwind CSS: A utility-first CSS framework for rapid and responsive UI styling.
+
 ⚙️ Setup Instructions
 Follow these steps to get the project up and running on your local machine.
 ##Prerequisites
@@ -97,6 +101,7 @@ npm run dev
 
 The frontend will typically open in the browser at http://localhost:5173/.
 You should now see the Hospital Management Dashboard in your browser, with navigation options for Departments, Doctors, Patient Management (Admin), and Patient Self-Registration.
+
 💻 Running as a Standalone CLI Application
 At the core this is a CLI application so you can manage your hospital data directly from the command line using python -m src.cli, which is often useful for scripting, batch operations, or quick data checks without starting the web server.
 Prerequisites: Ensure you are in your backend project's root directory (HOSPITAL-MANAGEMENT-SYSTEM-) and have activated your pipenv shell.
@@ -176,6 +181,7 @@ python -m src.cli patient update 3 --room-number "401B" --discharge-date "2024-0
 python -m src.cli patient delete 5
 
 (Replace 5 with the Patient ID you want to delete.)
+
 ☁️ Deployment
 This project has been tested for deployment on platforms like Render.
 Backend Deployment: Deploy your Flask API as a "Web Service" on Render. Ensure your Procfile (if used) points to your Flask app (e.g., web: gunicorn src.api:app).
@@ -183,6 +189,7 @@ Frontend Deployment: Deploy your React application as a "Static Site" on Render.
 Build Command: npm run build
 Publish Directory: dist
 Update API Base URL: Crucially, once your backend API is deployed on Render, you have to update the API_BASE_URL in frontend-hms/src/App.jsx to point to your live Render backend API URL (e.g., https://your-hms-api.onrender.com). Then, redeploy your frontend.
+
 🚀 Future Enhancements
 1. Authentication & Authorization: Implement user login, roles (Admin, Doctor, Patient), and restrict access to certain functionalities based on roles.
 2. Appointments & Medical Records UI: Create dedicated frontend interfaces for managing appointments and viewing/adding medical records.
