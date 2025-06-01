@@ -262,3 +262,20 @@ def list_department_specialty_doctors_command(department_id):
         click.echo(f"Error listing specialty doctors for department: {e}", err=True)
     finally:
         session.close()
+
+
+# -------------------- COMMANDS TO RUN --------------------
+# To add a department 
+#         => python -m src.cli department add --name "Cardiology" --specialty "Heart" --head-doctor-id 1
+
+# To list the departments available
+#         => python -m src.cli department list
+
+# To update a department 
+#         => python -m src.cli department update 1 --name "New Name" --specialty "New Specialty" --head-doctor-id 2
+
+# To show a department 
+#         => python -m src.cli department show 1
+
+# To delete a department
+#         => python -m src.cli department delete 1

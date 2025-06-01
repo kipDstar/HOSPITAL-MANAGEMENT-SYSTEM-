@@ -159,3 +159,18 @@ def delete_appointment(appointment_id):
 if __name__ == '__main__':
     appointment()
 # This code defines a command-line interface (CLI) for managing appointments in a hospital management system.
+
+
+
+# -------------------- APPOINTMENT COMMANDS --------------------
+# To add a appointment
+#         => python -m src.cli appointment add
+
+# To list appointments
+#         => python -m src.cli appointment list
+
+# To update a appointment
+#         => python -m src.cli appointment update <appointment_id>
+
+# To delete a appointment 
+#         => python -m src.cli appointment delete <appointment_id>

@@ -131,3 +131,17 @@ if __name__ == '__main__':
 # This code defines a CLI for managing doctors in a hospital management system.
 # It allows adding, updating, listing, deleting, and filtering doctors by specialization.
 # The commands interact with a database using SQLAlchemy, and handle errors gracefully.
+
+
+# -------------------- DOCTOR COMMANDS --------------------
+# To add a doctor
+#         => python -m src.cli doctor add
+
+# To list doctors
+#         => python -m src.cli doctor list
+
+# To update a doctor
+#         => python -m src.cli doctor update <doctor_id>
+
+# To delete a doctor 
+#         => python -m src.cli doctor delete <doctor_id>
