@@ -274,8 +274,5 @@ def list_department_specialty_doctors_command(department_id):
 # To update a department 
 #         => python -m src.cli department update 1 --name "New Name" --specialty "New Specialty" --head-doctor-id 2
 
-# To show a department 
-#         => python -m src.cli department show 1
-
 # To delete a department
 #         => python -m src.cli department delete 1

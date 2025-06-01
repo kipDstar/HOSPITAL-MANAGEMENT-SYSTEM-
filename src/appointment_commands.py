@@ -164,13 +164,19 @@ if __name__ == '__main__':
 
 # -------------------- APPOINTMENT COMMANDS --------------------
 # To add a appointment
-#         => python -m src.cli appointment add
+#         => python -m src.cli appointment add --patient-id 1 --doctor-id 2 --datetime "2025-06-10 14:00" --reason "Checkup" --status scheduled
 
 # To list appointments
 #         => python -m src.cli appointment list
 
+# To list specific patient appointments
+#         => python -m src.cli appointment list --patient-id 1
+
+# To list specific doctor appointments
+#         => python -m src.cli appointment list --doctor-id 1
+
 # To update a appointment
-#         => python -m src.cli appointment update <appointment_id>
+#         => python -m src.cli appointment update 3 --patient-id 2 --doctor-id 4 --datetime "2025-06-15 09:00" --reason "Follow-up" --status completed
 
 # To delete a appointment 
 #         => python -m src.cli appointment delete <appointment_id>
