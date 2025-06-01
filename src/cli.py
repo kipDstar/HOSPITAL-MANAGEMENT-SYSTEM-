@@ -1,6 +1,7 @@
 # src/cli.py
 
 import click
+import sys
 from datetime import date, datetime
 from src.database import get_db, create_tables # Import get_db_session and create_tables
 from src.models import Department, Doctor, Patient, Appointment, MedicalRecord, InPatient, OutPatient # Import all your models
