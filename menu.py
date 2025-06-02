@@ -240,12 +240,20 @@ def add_doctor():
             print("⚠️ No departments found. Please create a department first.")
             return
 
+        # Label-ID mapping
         dept_choices = [(f"{d.name} (ID {d.id})", d.id) for d in departments]
-        department_id = inquirer.select(
+        labels = [label for label, _ in dept_choices]
+
+        # User selects label
+        selected_label = inquirer.select(
             message="🏥 Select Department:",
-            choices=dept_choices
+            choices=labels
         ).execute()
 
+        # Get the corresponding department ID
+        department_id = dict(dept_choices)[selected_label]
+
+        # Create doctor with correct department_id (int)
         doctor = Doctor(
             name=name,
             specialization=specialization,
@@ -260,7 +268,6 @@ def add_doctor():
         print(f"❌ Error adding doctor: {e}")
     finally:
         db.close()
-
 
 def list_doctors():
     db = next(get_db())
@@ -289,15 +296,23 @@ def update_doctor():
             print(f"❌ No doctor with ID {doctor_id} found.")
             return
 
+        # Build choices and default
         departments = db.query(Department).all()
         dept_choices = [(f"{d.name} (ID {d.id})", d.id) for d in departments]
         current_dept = doctor.department_id
-        department_id = inquirer.select(
+        default_label = next((label for label, value in dept_choices if value == current_dept), None)
+
+        # Ask user
+        selected_label = inquirer.select(
             message="🏥 Select new Department:",
-            choices=dept_choices,
-            default=current_dept
+            choices=[label for label, _ in dept_choices],
+            default=default_label
         ).execute()
 
+        # Map back to ID
+        department_id = dict(dept_choices)[selected_label]
+
+        # Update fields
         if name:
             doctor.name = name
         if specialization:
@@ -313,7 +328,6 @@ def update_doctor():
         print(f"❌ Error updating doctor: {e}")
     finally:
         db.close()
-
 
 def delete_doctor():
     doctor_id = inquirer.number(message="🆔 Enter Doctor ID to delete:", min_allowed=1).execute()
