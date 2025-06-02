@@ -1,4 +1,5 @@
 from InquirerPy import inquirer
+from InquirerPy.base.control import Choice
 from datetime import datetime
 from src.database import get_db
 from src.models import Patient, InPatient, OutPatient, Doctor, Department, Appointment, MedicalRecord, PatientType, AppointmentStatus
@@ -234,10 +235,22 @@ def add_doctor():
 
     db = next(get_db())
     try:
+        departments = db.query(Department).all()
+        if not departments:
+            print("⚠️ No departments found. Please create a department first.")
+            return
+
+        dept_choices = [(f"{d.name} (ID {d.id})", d.id) for d in departments]
+        department_id = inquirer.select(
+            message="🏥 Select Department:",
+            choices=dept_choices
+        ).execute()
+
         doctor = Doctor(
             name=name,
             specialization=specialization,
-            contact_info=contact
+            contact_info=contact,
+            department_id=department_id
         )
         db.add(doctor)
         db.commit()
@@ -257,7 +270,8 @@ def list_doctors():
             print("ℹ️ No doctors found.")
             return
         for d in doctors:
-            print(f"ID: {d.id}, Name: {d.name}, Specialization: {d.specialization}")
+            dept_name = d.department.name if d.department else "N/A"
+            print(f"ID: {d.id}, Name: {d.name}, Specialization: {d.specialization}, Dept: {dept_name}")
     finally:
         db.close()
 
@@ -274,12 +288,24 @@ def update_doctor():
         if not doctor:
             print(f"❌ No doctor with ID {doctor_id} found.")
             return
+
+        departments = db.query(Department).all()
+        dept_choices = [(f"{d.name} (ID {d.id})", d.id) for d in departments]
+        current_dept = doctor.department_id
+        department_id = inquirer.select(
+            message="🏥 Select new Department:",
+            choices=dept_choices,
+            default=current_dept
+        ).execute()
+
         if name:
             doctor.name = name
         if specialization:
             doctor.specialization = specialization
         if contact:
             doctor.contact_info = contact
+        doctor.department_id = department_id
+
         db.commit()
         print(f"✅ Doctor ID {doctor_id} updated successfully!")
     except Exception as e:
@@ -310,25 +336,25 @@ def delete_doctor():
         print(f"❌ Error deleting doctor: {e}")
     finally:
         db.close()
-
-
 # ----------------- Department Menu -------------------
+
+
 def department_menu():
     while True:
         choice = inquirer.select(
-            message="🏢 Department Management",
+            message="🏥 Department Management Menu",
             choices=[
-                "➕ Add Department 🏢",
-                "📜 List Departments",
+                "➕ Add Department",
+                "📋 List Departments",
                 "✏️ Update Department",
                 "🗑️ Delete Department",
                 "🔙 Back to Main Menu"
             ],
         ).execute()
 
-        if choice == "➕ Add Department 🏢":
+        if choice == "➕ Add Department":
             add_department()
-        elif choice == "📜 List Departments":
+        elif choice == "📋 List Departments":
             list_departments()
         elif choice == "✏️ Update Department":
             update_department()
@@ -337,53 +363,104 @@ def department_menu():
         else:
             break
 
-def add_department():
-    name = inquirer.text(message="🏢 Department name:").execute()
-    specialty = inquirer.text(message="📋 Specialty:").execute()
 
+def add_department():
     db = next(get_db())
     try:
-        department = Department(name=name, specialty=specialty)
-        db.add(department)
-        db.commit()
-        print(f"✅ Department '{name}' added successfully!")
+        while True:
+            name = inquirer.text(message="🏥 Enter department name:").execute()
+            existing_department = db.query(Department).filter_by(name=name).first()
+            if existing_department:
+                print(f"❌ Department with name '{name}' already exists. Please choose a different name.")
+            else:
+                break
+
+        specialty = inquirer.text(message="🩺 Enter specialty (optional):", default="").execute()
+
+        doctors = db.query(Doctor).all()
+        head_doctor_id = None
+
+        if doctors:
+            assign_head = inquirer.confirm(message="👨‍⚕️ Assign a Head Doctor?", default=False).execute()
+            if assign_head:
+                # Create a dictionary where keys are the display strings and values are the actual doctor IDs (integers)
+                doctor_choices_map = {f"{doc.name} (ID: {doc.id})": doc.id for doc in doctors}
+
+                # Inquirer.select returns the *key* (the string) that the user selected
+                selected_doctor_display_string = inquirer.select(
+                    message="Select Head Doctor:",
+                    choices=list(doctor_choices_map.keys()) # Pass only the display strings as choices
+                ).execute()
+
+                # Use the selected display string to get the actual integer ID from our map
+                head_doctor_id = doctor_choices_map[selected_doctor_display_string]
+
+        print("DEBUG head_doctor_id before create:", head_doctor_id, type(head_doctor_id))
+
+        department = Department.create(
+            session=db,
+            name=name,
+            specialty=specialty or None,
+            head_doctor_id=head_doctor_id
+        )
+        db.commit() # Commit the transaction
+
+        print(f"✅ Department '{department.name}' added successfully.")
+        if department.head_doctor:
+            print(f"👑 Head Doctor: {department.head_doctor.name}")
+
     except Exception as e:
         db.rollback()
-        print(f"❌ Error adding department: {e}")
+        print(f"❌ Failed to add department due to data integrity issue: {e}")
+    except Exception as e:
+        db.rollback()
+        print(f"❌ An unexpected error occurred: {e}")
     finally:
         db.close()
-
 
 def list_departments():
     db = next(get_db())
     try:
-        departments = db.query(Department).all()
+        departments = Department.get_all(db)
         if not departments:
-            print("ℹ️ No departments found.")
+            print("ℹ️ No departments available.")
             return
-        for d in departments:
-            print(f"ID: {d.id}, Name: {d.name}, Specialty: {d.specialty}")
+        print("\n📋 Departments:")
+        for dept in departments:
+            head_name = dept.head_doctor.name if dept.head_doctor else "None"
+            print(f"ID: {dept.id} | Name: {dept.name} | Specialty: {dept.specialty or 'N/A'} | Head Doctor: {head_name}")
     finally:
         db.close()
 
 
 def update_department():
-    department_id = inquirer.number(message="🆔 Enter Department ID to update:", min_allowed=1).execute()
-    name = inquirer.text(message="New name (leave blank to skip):", default="").execute()
-    specialty = inquirer.text(message="New specialty (leave blank to skip):", default="").execute()
-
+    dept_id = inquirer.number(message="🆔 Enter Department ID to update:").execute()
     db = next(get_db())
     try:
-        department = db.get(Department, department_id)
-        if not department:
-            print(f"❌ No department with ID {department_id} found.")
+        dept = Department.find_by_id(db, dept_id)
+        if not dept:
+            print(f"❌ Department with ID {dept_id} not found.")
             return
-        if name:
-            department.name = name
-        if specialty:
-            department.specialty = specialty
-        db.commit()
-        print(f"✅ Department ID {department_id} updated successfully!")
+
+        name = inquirer.text(message="New name (leave blank to keep current):", default="").execute()
+        specialty = inquirer.text(message="New specialty (leave blank to keep current):", default="").execute()
+
+        change_head = inquirer.confirm(message="👑 Change Head Doctor?", default=False).execute()
+        head_doctor_id = None
+        if change_head:
+            doctors = db.query(Doctor).all()
+            if doctors:
+                choices = [(f"{doc.name} (ID: {doc.id})", doc.id) for doc in doctors]
+                head_doctor_id = inquirer.select(message="Select new Head Doctor:", choices=choices).execute()
+
+        dept.update_info(
+            session=db,
+            name=name or None,
+            specialty=specialty or None,
+            head_doctor_id=head_doctor_id
+        )
+        print(f"✅ Department '{dept.name}' updated.")
+
     except Exception as e:
         db.rollback()
         print(f"❌ Error updating department: {e}")
@@ -392,31 +469,28 @@ def update_department():
 
 
 def delete_department():
-    department_id = inquirer.number(message="🆔 Enter Department ID to delete:", min_allowed=1).execute()
+    dept_id = inquirer.number(message="🆔 Enter Department ID to delete:").execute()
     confirm = inquirer.confirm(
-        message=f"⚠️ Are you sure you want to delete department ID {department_id}?",
+        message=f"⚠️ Are you sure you want to delete Department ID {dept_id}?",
         default=False
     ).execute()
 
     if not confirm:
-        print("❎ Delete cancelled.")
+        print("❎ Deletion cancelled.")
         return
 
     db = next(get_db())
     try:
-        department = db.get(Department, department_id)
-        if not department:
-            print(f"❌ No department with ID {department_id} found.")
-            return
-        db.delete(department)
-        db.commit()
-        print(f"🗑️ Department ID {department_id} deleted successfully.")
+        success = Department.delete_by_id(db, dept_id)
+        if success:
+            print(f"🗑️ Department ID {dept_id} deleted.")
+        else:
+            print(f"❌ Department ID {dept_id} not found.")
     except Exception as e:
         db.rollback()
         print(f"❌ Error deleting department: {e}")
     finally:
         db.close()
-
 
 # ----------------- Medical Record Menu -------------------
 
