@@ -29,10 +29,10 @@ const App = () => {
   // NEW: State to manage the active view
   const [activeView, setActiveView] = useState('departments'); // 'departments', 'patients', 'self-register'
 
-  // --- API Base URL ---
-  // IMPORTANT: Replace with your Render API URL when deployed!
-  // For local development, it's usually http://localhost:5000
-  const API_BASE_URL = 'http://localhost:5000';
+ 
+  // Replace with your Render API URL when deployed!
+ 
+  const API_BASE_URL = 'http://localhost:5000'; // Change this to your actual API base URL
 
   // --- Fetch Departments ---
   // useEffect hook to fetch departments when the component mounts or data changes
@@ -58,7 +58,7 @@ const App = () => {
     if (activeView === 'departments') {
         fetchDepartments();
     }
-  }, [activeView]); // Re-run when activeView changes
+  }, [activeView]); // To Re-run when activeView changes
 
   // --- Fetch Doctors for Dropdown ---
   useEffect(() => {
