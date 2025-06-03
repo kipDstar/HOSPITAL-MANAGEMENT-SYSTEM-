@@ -1,5 +1,5 @@
 from InquirerPy import inquirer
-from InquirerPy.base.control import Choice
+from InquirerPy.base import Choice
 from datetime import datetime
 from src.database import get_db
 from src.models import Patient, InPatient, OutPatient, Doctor, Department, Appointment, MedicalRecord, PatientType, AppointmentStatus
@@ -448,7 +448,7 @@ def list_departments():
 
 
 def update_department():
-    dept_id = inquirer.number(message="🆔 Enter Department ID to update:").execute()
+    dept_id = inquirer.number(message="🆔 Enter Department ID to update:", min_allowed=1).execute()
     db = next(get_db())
     try:
         dept = Department.find_by_id(db, dept_id)
@@ -459,13 +459,22 @@ def update_department():
         name = inquirer.text(message="New name (leave blank to keep current):", default="").execute()
         specialty = inquirer.text(message="New specialty (leave blank to keep current):", default="").execute()
 
+        head_doctor_id = dept.head_doctor_id  # keep current head doctor by default
         change_head = inquirer.confirm(message="👑 Change Head Doctor?", default=False).execute()
-        head_doctor_id = None
         if change_head:
             doctors = db.query(Doctor).all()
             if doctors:
-                choices = [(f"{doc.name} (ID: {doc.id})", doc.id) for doc in doctors]
-                head_doctor_id = inquirer.select(message="Select new Head Doctor:", choices=choices).execute()
+                # Create a mapping of display strings to doctor IDs
+                doctor_choices_map = {f"{doc.name} (ID: {doc.id})": doc.id for doc in doctors}
+
+                # Ask user to select a doctor by display string
+                selected_label = inquirer.select(
+                    message="Select new Head Doctor:",
+                    choices=list(doctor_choices_map.keys())
+                ).execute()
+
+                # Map back the selected label to the actual doctor ID
+                head_doctor_id = doctor_choices_map[selected_label]
 
         dept.update_info(
             session=db,
