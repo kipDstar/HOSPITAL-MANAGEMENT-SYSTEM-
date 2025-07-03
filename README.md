@@ -1,8 +1,8 @@
-Hospital Management System (HMS)
+# Hospital Management System (HMS)
 
 A full-stack web application designed to manage hospital operations, including departments, medical staff, and patient records. The system provides administrative interfaces for comprehensive data management and a patient-facing portal for self-registration.
 
-✨ Features
+## ✨ Features
 This Hospital Management System offers the following key functionalities:
 
 ## Department Management:
@@ -29,10 +29,10 @@ View, Edit, Delete: Comprehensive management of existing patient records.
 ## Patient Self-Registration:
 New Patient Onboarding: A dedicated interface allowing new patients to register themselves by providing basic personal and contact information. Self-registered patients are initially classified as outpatients.
 
-🚀 Techstack:
+## 🚀 Techstack:
 This project leverages a modern full-stack architecture:
 
-Backend:
+### Backend:
 Flask: A lightweight Python web framework for building the RESTful API.
 
 SQLAlchemy: Python SQL toolkit and Object-Relational Mapper (ORM) for interacting with the database.
@@ -44,7 +44,7 @@ Flask-CORS: Enables Cross-Origin Resource Sharing for seamless communication wit
 Pipenv: A dependency management tool for Python projects.
 
 
-Frontend:
+### Frontend:
 React: A JavaScript library for building interactive user interfaces.
 
 Vite: A fast build tool that provides a rapid development environment for React.
@@ -52,7 +52,7 @@ Vite: A fast build tool that provides a rapid development environment for React.
 Tailwind CSS: A utility-first CSS framework for rapid and responsive UI styling.
 
 
-⚙️ Setup Instructions
+## ⚙️ Setup Instructions
 Follow these steps to get the project up and running on your local machine.
 
 ## Prerequisites
@@ -70,7 +70,7 @@ Pipenv: Install globally using pip: pip install pipenv
 
 
 ## 1. Backend Setup
-Clone the Repository:
+> Clone the Repository:
 
 Navigate to your desired development directory and clone your project repository (assuming your backend is part of a larger repo or is the root of HOSPITAL-MANAGEMENT-SYSTEM-):
 
@@ -78,38 +78,38 @@ git clone <your-repo-url>
 cd HOSPITAL-MANAGEMENT-SYSTEM-
 
 
-Install Python Dependencies:
+> Install Python Dependencies:
 pipenv install
 
 This will create a virtual environment and install all dependencies listed in Pipfile.
-Activate the Virtual Environment:
+> Activate the Virtual Environment:
 pipenv shell
 
 Your terminal prompt should change to indicate the active virtual environment (e.g., (HOSPITAL-MANAGEMENT-SYSTEM-)).
-Set Flask Application:
+> Set Flask Application:
 Tell Flask where to find your main application file:
 export FLASK_APP=src/api.py
 alternatively pass in the cli command: python -m src.api to launch the api file
 
 
-Initialize the Database:
+> Initialize the Database:
 Delete any old hospital.db file if it exists, then create the database tables:
 rm -f hospital.db # Use 'del hospital.db' on Windows
 python -m src.cli createtables
 
 
-Seed Initial Data (Optional but Recommended):
+> Seed Initial Data (Optional but Recommended):
 Populate your database with some sample data for testing:
 python -m src.cli seed
 
 
 ## 2. Frontend Setup
-Navigate to the Frontend Directory:
+> Navigate to the Frontend Directory:
 From your backend root, go into the frontend folder:
 cd frontend-hms
 
 
-Install Node.js Dependencies:
+> Install Node.js Dependencies:
 npm install
 
 
@@ -211,10 +211,10 @@ python -m src.cli patient delete 5
 
 ## ☁️ Deployment
 This project has been tested for deployment on platforms like Replit and Render.
-Example deployment(render):
-Backend Deployment: Deploy your Flask API as a "Web Service" on Render. Ensure your Procfile (if used) points to your Flask app (e.g., web: gunicorn src.api:app).
+>> Example deployment(render):
+### Backend Deployment: Deploy your Flask API as a "Web Service" on Render. Ensure your Procfile (if used) points to your Flask app (e.g., web: gunicorn src.api:app).
 
-Frontend Deployment: Deploy your React application as a "Static Site" on Render.
+### Frontend Deployment: Deploy your React application as a "Static Site" on Render.
 
 Build Command: npm run build
 Publish Directory: dist
